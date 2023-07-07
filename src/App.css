@@ -1,38 +1,329 @@
-.App {
-  text-align: center;
-}
-
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
-}
-
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
+.flex-center{
   display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.flex-column{
+  display:flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  font-size: calc(10px + 2vmin);
+}
+.flex-row{
+  display:flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content:space-evenly
+}
+
+
+/* header css */
+.header{
+  background-color: blue;
+}
+.heading{
+  margin:0px;
+  padding: 10px;
+  text-align: center;
+  color:white;
+  font-size: 30px;
+  font-weight: bold;
+}
+
+/* navbar css */
+
+nav{
+  background-color: rgb(234, 255, 0);
+  display:flex;
+  justify-content: space-between;
+}
+nav>ul{
+list-style: none;
+display: flex;
+flex-direction: row;
+justify-content: space-between;
+}
+nav>ul>li{
+  padding: 8px;
+  
+}
+nav>ul>li>a{
+  font-size: 20px;
+  font-weight: bold;
+  color: rgb(42, 42, 42);
+  cursor: pointer;
+  text-decoration: none;
+}
+nav>ul>li>a:hover{
+  color: rgb(158, 158, 158);
+}
+.logo>img{
+  padding:10px;
+  height: 50px;
+  border-radius: 100px;
+  
+}
+/* search functionality css */
+.search-box{
+  margin:10px;
+  margin-left: 30px;
+}
+.search-box-shimmer{
+  margin:10px;
+  margin-left: 30px;
+  height: 40px;
+  width: 230px;
+  background-color: rgb(238, 238, 238);
+  border: 1px solid rgb(174, 174, 174);
+}
+.search-box>input{
+  padding: 10px;
+  width: 200px;
+  border-radius: 10px;
+  font-size: 15px;
+}
+
+/* products */
+
+.products-box{
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-around;
+  margin: 10px;
+}
+.product-card{
+  display:flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 200px;
+  /* height: 280px; */
+  border: 1px solid black;
+  margin: 10px;
+  border-radius: 10px;
+  padding: 10px;
+  box-shadow: 0px 0px 10px 0px grey;
+}
+.product-card-shimmer{
+  background-color: rgb(238, 238, 238);
+  width: 200px;
+  height: 345px;
+  border: 1px solid rgb(174, 174, 174);
+  margin: 10px;
+  border-radius: 10px;
+  padding: 10px;
+  box-shadow: 0px 0px 10px 0px grey;
+}
+.product-img>img{
+  /* width: 100%; */
+  height: 100px;
+  border-radius: 10px;
+}
+.product-details{
+  padding: 3px;
+}
+.product-details>h4{
+  text-align: center;
+font-size: 16px;
+}
+.product-details>p{
+  text-align: center;
+  font-size: 15px;
+}
+.price>h4{
+  margin:10px;
+  font-size: 20px;
+  font-weight: bold;
+  color:green;
+}
+.product-btn{
+  padding: 5px;
+  width: 200px;
+  border-radius: 10px;
+  background-color: rgb(255, 184, 62);
+  font-size: 12px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+/* cart */
+
+.cart-box{
+  display:flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+.cart-box>h1{
+  margin: 10px;
+  font-size: 30px;
+  font-weight: bold;
+}
+.products-list{
+  width:70%;
+  margin-bottom:20vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+.product-row{
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  margin: 10px;
+  padding: 10px;
+  border: 1px solid rgb(149, 149, 149);
+  box-shadow: 0px 0px 10px 0px grey;
+  border-radius: 10px;
+}
+
+.product-row-shimmer{
+  width: 100%;
+  margin: 10px;
+  height: 120px;
+  border: 1px solid rgb(149, 149, 149);
+  box-shadow: 0px 0px 10px 0px grey;
+  border-radius: 10px;
+}
+.product-row>img{
+  height: 100px;
+  border-radius: 10px;
+}
+.title{
+  width:30%;
+}
+.product-row>div{
+  font-size: 20px;
+}
+.delete-btn{
+  padding: 5px;
+  width: 100px;
+  border-radius: 10px;
+  background-color: rgb(255, 60, 0);
+  font-size: 14px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.order{
+  height: 100px;
+  position:fixed;
+  bottom:0%;
+  left:0%;
+  background-color: rgb(153, 153, 153);
+  display: flex;
+  flex-direction: row;
+  justify-content:space-around;
+  align-items: center;
+  width: 100%;
+}
+.total{
+  margin: 10px;
+  font-size: 30px;
+  font-weight: bold;
   color: white;
 }
-
-.App-link {
-  color: #61dafb;
+.order-btn{
+  padding:10px;
+  width:10%;
+  background-color: rgb(255, 184, 62);
+  border-radius: 10px;
+  font-size: 20px;
+  font-weight: bold;
+  cursor: pointer;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+/* Alert */
+.alert{
+  display:none;
+  justify-content: center;
+  align-items: center;
+  position: fixed;
+  top:12%;
+  left:30%;
+  width:40%;
+  background-color:rgb(155, 255, 232);
+  border-radius: 10px;
+  border:1px solid grey;
+}
+/* contact form */
+
+.form-container{
+  width:100%;
+  
+}
+.search-form-container{
+  width:100%;
+}
+.contact-form{
+  width:50%;
+  height: 50vh;
+}
+.inputgroup{
+  width:80%;
+  margin:10px;
+  display: flex;
+  justify-content: space-between;
+}
+.form-label{
+  font-size: 1.5em;
+  color:rgb(0, 0, 0);
+}
+.form-input{
+  width:60%;
+  font-size: 1.3em;
+}
+.form-btn{
+  color:rgb(200, 123, 0);
+  font-size: 1.4em;
+  font-weight: bold;
+  background-color: rgb(209, 209, 209);
+  padding:5px;
+  width:20%;
+  border:1px solid green;
+  outline:none;
+  border-radius: 4px;
+}
+.form-btn:hover{
+  background-color: rgb(179, 179, 179);
+  cursor: pointer;
+}
+.form-btn>a{
+  text-decoration: none;
+  color:rgb(2, 161, 2);
+}
+
+
+/* home */
+.home{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin:0px;
+  width:100%;
+  height: 100vh;
+  background-image: linear-gradient(to bottom right, rgb(255, 135, 79), rgb(255, 229, 84));
+}
+.home-label{
+  
+  font-size: 3.2em;
+  color:rgb(255, 255, 255);
+  font-weight: bold;
+  font-family: cursive;
+}
+.home-label-large{
+  font-size: 3.5em;
+  color:rgb(255, 0, 0);
+  font-weight: bold;
+  font-family: cursive;
+}
+.flex-last{
+  width:70%;
+  display:flex;
+  justify-content:end;
+
 }
