@@ -2,6 +2,7 @@ import React from "react";
 import { useState, useEffect } from "react";
 import ProductsShimmer from "./ProductsShimmer";
 import Alert from "./Alert";
+import { Link } from "react-router-dom";
 
 function Products() {
   const [products, setProducts] = useState([]);
@@ -27,8 +28,15 @@ function Products() {
     setFilteredProducts(data);
   };
 
+  function manageToggle() {
+    setToggle(true);
+    setTimeout(() => {
+      setToggle(false);
+    }, 2000);
+  }
+
   function addToCart(id) {
-    setToggle({display:"flex"});
+    manageToggle();
     console.log("added to cart");
     if (localStorage.getItem("cart") === null) {
       localStorage.setItem("cart", JSON.stringify([{ id: id, quantity: 1 }]));
@@ -43,22 +51,18 @@ function Products() {
       }
     }
   }
-  const [toggle, setToggle] = useState({display:"none"});
+
   useEffect(() => {
-    if(toggle.display==="none") return;
-    const timer = setTimeout(() => {
-      setToggle({display:"none"});
-    }, 2000);
-    return () => clearTimeout(timer);
-  }, [toggle]);
+    searchProducts();
+  }, [search]);
+
+  const [toggle, setToggle] = useState(false);
 
   if (products.length === 0) return <ProductsShimmer />;
   return (
     <>
-      
-    <Alert style={toggle} message="Item added to cart!"/>
-    
-    
+      <Alert toggle={toggle} message="Item added to cart!" />
+
       <div className="search-box">
         <input
           type="text"
@@ -66,7 +70,6 @@ function Products() {
           value={search}
           onChange={(e) => {
             setSearch(e.target.value);
-            searchProducts();
           }}
         />
       </div>
@@ -75,22 +78,23 @@ function Products() {
         {filteredProducts.map((item) => {
           return (
             <div key={item.id} className="product-card">
-              <div className="product-img">
-                <img src={item.image} alt="" />
-              </div>
-              <div className="product-details">
-                <h4>{item.title}</h4>
-                <p>Ratings: {item.rating.rate}</p>
-              </div>
-              <div className="price">
-                <h4>$ {item.price}</h4>
-              </div>
+              <Link to={`${item.id}`} className="flex-column">
+                <div className="product-img">
+                  <img src={item.image} alt="" />
+                </div>
+                <div className="product-details">
+                  <h4>{item.title}</h4>
+                  <p>Ratings: {item.rating.rate}</p>
+                </div>
+                <div className="price">
+                  <h4>$ {item.price}</h4>
+                </div>
+              </Link>
               <div className="add-to-cart">
                 <button
                   className="product-btn"
                   onClick={() => {
                     addToCart(item.id);
-                    
                   }}
                 >
                   Add to Cart

@@ -3,53 +3,63 @@ import "../App.css";
 import Alert from "./Alert";
 import { useState } from "react";
 import CartShimmer from "./CartShimmer";
+import BackButton from "./BackButton";
 
 function Cart() {
-let effect =useRef(false);
+  let effect = useRef(true);
   const [products, setProducts] = useState([]);
-  let cartProducts = JSON.parse(localStorage.getItem("cart"));
-  
-    useEffect(() => {
-      console.log("running")
-        if(!effect.current){
-         cartProducts.forEach(element => {
-            fetch(`https://fakestoreapi.com/products/${element.id}`)
-            .then((res) => res.json())
-            .then((json) => {
-                json.quantity=element.quantity;
-                setProducts((products) => [...products, json]);
-                }
-            );
-         });
-            effect.current=true;
-    }
-},[]);
-  
-//   console.log(products);
-
-  function deleteItem(id) {
-  setToggle({display:"flex"});
-      cartProducts = cartProducts.filter((item) => item.id !== id);
-      localStorage.setItem("cart", JSON.stringify(cartProducts));
-      setProducts(products.filter((item) => item.id !== id));
+  let cartProducts = [];
+  if (localStorage.getItem("cart") !== null) {
+    cartProducts = JSON.parse(localStorage.getItem("cart"));
+    effect.current = false;
   }
 
-  const [toggle, setToggle] = useState({display:"none"});
   useEffect(() => {
-    if(toggle.display==="none") return;
-    const timer = setTimeout(() => {
-      setToggle({display:"none"});
-    }, 1000);
-    return () => clearTimeout(timer);
-  }, [toggle]);
+    console.log("running");
+    if (!effect.current) {
+      cartProducts.forEach((element) => {
+        function fetchProducts() {
+          fetch(`https://fakestoreapi.com/products/${element.id}`)
+            .then((res) => res.json())
+            .then((json) => {
+              json.quantity = element.quantity;
+              setProducts((products) => [...products, json]);
+            });
+        }
+        fetchProducts();
+      });
+      effect.current = true;
+    }
+  }, []);
 
-  let totalAmount=products.reduce((acc,curr)=>{
-    return acc+curr.price*curr.quantity;
-},0);
-if(products.length===0)return <CartShimmer/>;
+  //   console.log(products);
+
+
+  function manageToggle() {
+    setToggle(true);
+    setTimeout(() => {
+      setToggle(false);
+    }, 2000);
+  }
+
+  function deleteItem(id) {
+    manageToggle();
+    cartProducts = cartProducts.filter((item) => item.id !== id);
+    localStorage.setItem("cart", JSON.stringify(cartProducts));
+    setProducts(products.filter((item) => item.id !== id));
+  }
+
+  const [toggle, setToggle] = useState(false);
+
+  let totalAmount = products.reduce((acc, curr) => {
+    return acc + curr.price* curr.quantity;
+  }, 0);
+  if (products.length === 0 && cartProducts.length !== 0)
+    return <CartShimmer />;
   return (
     <div className="cart-box">
-      <Alert style={toggle} message="Item deleted!"/>
+      <BackButton />
+      <Alert toggle={toggle} message="Item deleted!" />
       <h1>Cart</h1>
       <div className="products-list">
         {products.map((item) => {
@@ -61,7 +71,10 @@ if(products.length===0)return <CartShimmer/>;
               <div className="quantity">
                 {cartProducts.find((it) => it.id === item.id).quantity}
               </div>
-              <button className="delete-btn" onClick={()=>deleteItem(item.id)}>
+              <button
+                className="delete-btn"
+                onClick={() => deleteItem(item.id)}
+              >
                 Delete
               </button>
             </div>
