@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useCallback, useRef } from "react";
 import { useState, useEffect } from "react";
 import ProductsShimmer from "./ProductsShimmer";
 import Alert from "./Alert";
@@ -8,12 +8,24 @@ function Products() {
   const [products, setProducts] = useState([]);
   const [filteredProducts, setFilteredProducts] = useState([]);
   const [search, setSearch] = useState("");
+  const [toggle, setToggle] = useState(false);
+  const [shimmer, setShimmer] = useState(true);
+  const [networkError, setnetworkError] = useState(false);
+  const [message, setMessage] = useState("");
+  let networkRef=useRef(false);
+
   useEffect(() => {
+    setShimmer(true);
     fetch("https://fakestoreapi.com/products")
       .then((res) => res.json())
       .then((json) => {
         setProducts(json);
         setFilteredProducts(json);
+        setShimmer(false);
+      })
+      .catch((e) => {
+        setnetworkError(true);
+        setMessage("Network Error");
       });
   }, []);
   const searchProducts = () => {
@@ -28,16 +40,13 @@ function Products() {
     setFilteredProducts(data);
   };
 
-  function manageToggle() {
-    setToggle(true);
-    setTimeout(() => {
-      setToggle(false);
-    }, 2000);
-  }
+  const manageToggle= (inp) => {
+      setToggle(inp);
+    }
 
   function addToCart(id) {
-    manageToggle();
-    console.log("added to cart");
+    setToggle(true);
+    setMessage("Added to Cart");
     if (localStorage.getItem("cart") === null) {
       localStorage.setItem("cart", JSON.stringify([{ id: id, quantity: 1 }]));
     } else {
@@ -56,13 +65,18 @@ function Products() {
     searchProducts();
   }, [search]);
 
-  const [toggle, setToggle] = useState(false);
+  // if (networkError === true) {
+  //   if(!networkRef.current){
+  //   setToggle(true)
+  //   }
+  //   networkRef.current=true;
+  // }
 
-  if (products.length === 0) return <ProductsShimmer />;
   return (
     <>
-      <Alert toggle={toggle} message="Item added to cart!" />
-
+      <Alert toggle={toggle} manageToggle={manageToggle} message={message} />
+      {shimmer===true?<ProductsShimmer />:(
+        <>
       <div className="search-box">
         <input
           type="text"
@@ -104,6 +118,9 @@ function Products() {
           );
         })}
       </div>
+      </>
+      )
+}
     </>
   );
 }

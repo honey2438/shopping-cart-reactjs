@@ -156,6 +156,7 @@ nav>ul>li>a:hover{
 /* cart */
 
 .cart-box{
+  width:100%;
   display:flex;
   flex-direction: column;
   justify-content: center;

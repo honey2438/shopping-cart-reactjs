@@ -3,6 +3,7 @@ import { useState } from "react";
 import Alert from "./Alert";
 import { useEffect } from "react";
 import BackButton from "./BackButton";
+import { useCallback } from "react";
 
 function Contact() {
   const initialState = {
@@ -13,21 +14,20 @@ function Contact() {
     city: "",
   };
   const [data, setData] = useState(initialState);
+  const [toggle, setToggle] = useState(false);
 
   function reset(event) {
     event.preventDefault();
     setData(initialState);
   }
 
-  function manageToggle() {
-    setToggle(true);
-    setTimeout(() => {
-      setToggle(false);
-    }, 2000);
+  const manageToggle=useCallback(()=>{ 
+    setToggle(false);
   }
+  ,[toggle]);
 
   function submitRequest(event) {
-    manageToggle();
+    setToggle(true);
     event.preventDefault();
     if (localStorage.getItem("contact") === null) {
       localStorage.setItem("contact", JSON.stringify([data]));
@@ -38,12 +38,12 @@ function Contact() {
     }
   }
 
-  const [toggle, setToggle] = useState(false);
+  
 
   return (
     <div className="flex-column">
       <BackButton />
-      <Alert toggle={toggle} message="Request submitted successfully!" />
+      <Alert toggle={toggle} manageToggle={manageToggle} message="Request submitted successfully!" />
       <h1>Contact Form</h1>
       <div className="form-container flex-center">
         <form className="contact-form flex-column">

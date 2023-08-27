@@ -3,8 +3,10 @@ import { useParams } from "react-router-dom";
 import { useState } from "react";
 import Alert from "./Alert";
 import BackButton from "./BackButton";
+import { useCallback } from "react";
 
 function Description() {
+  const [toggle, setToggle] = useState(false);
   const param = useParams();
   console.log(param);
 
@@ -17,15 +19,13 @@ function Description() {
   }, []);
   console.log(product);
   
-  function manageToggle() {
-    setToggle(true);
-    setTimeout(() => {
-      setToggle(false);
-    }, 2000);
+  const manageToggle=useCallback(()=>{ 
+    setToggle(false);
   }
+  ,[toggle]);
 
   function addToCart(id) {
-    manageToggle();
+    setToggle(true);
     console.log("added to cart");
     if (localStorage.getItem("cart") === null) {
       localStorage.setItem("cart", JSON.stringify([{ id: id, quantity: 1 }]));
@@ -40,12 +40,12 @@ function Description() {
       }
     }
   }
-  const [toggle, setToggle] = useState(false);
+  
 
   return (
     <div>
       <BackButton />
-      <Alert toggle={toggle} message="Item added to cart!" />
+      <Alert toggle={toggle} manageToggle={manageToggle} message="Item added to cart!" />
       <div key={product.id} className="product-container">
         <div className="image-container">
           <img src={product.image} alt="" srcset="" />

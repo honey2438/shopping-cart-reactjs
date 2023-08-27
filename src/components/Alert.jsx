@@ -1,9 +1,16 @@
 import React from "react";
 import "../App.css";
 
-function Alert({ toggle, message }) {
+function Alert({ toggle,manageToggle, message }) {
+  // console.log("alert called");
   let style = { display: "none" };
-  if (toggle === true)style = { display: "flex" };
+  if (toggle === true){
+    style = { display: "flex" };
+    setTimeout(() => {
+      manageToggle(false);
+    }, 2000);
+  }
+
   
   return (
     <div style={style} className="alert">
