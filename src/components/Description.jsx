@@ -4,18 +4,27 @@ import { useState } from "react";
 import Alert from "./Alert";
 import BackButton from "./BackButton";
 import { useCallback } from "react";
+import axios from "axios";
+import {get_token} from "../services/get_token";
+import {getConfig} from "../config/getConfig";
 
 function Description() {
   const [toggle, setToggle] = useState(false);
+  const [message, setMessage] = useState("");
   const param = useParams();
-  console.log(param);
+  const config = getConfig();
+  const add_product_url=config.add_product_url;
 
   const [product, setProduct] = useState({});
 
   useEffect(() => {
     fetch(`https://fakestoreapi.com/products/${param.id}`)
       .then((res) => res.json())
-      .then((json) => setProduct(json));
+      .then((json) => setProduct(json)).catch((e) => {
+        setToggle(true);
+        setMessage("Network Error");
+        console.log(e);
+      });
   }, []);
   console.log(product);
   
@@ -25,27 +34,27 @@ function Description() {
   ,[toggle]);
 
   function addToCart(id) {
-    setToggle(true);
-    console.log("added to cart");
-    if (localStorage.getItem("cart") === null) {
-      localStorage.setItem("cart", JSON.stringify([{ id: id, quantity: 1 }]));
-    } else {
-      let cart = JSON.parse(localStorage.getItem("cart"));
-      if (cart.find((item) => item.id === id)) {
-        cart.find((item) => item.id === id).quantity++;
-        localStorage.setItem("cart", JSON.stringify(cart));
-      } else {
-        cart.push({ id: id, quantity: 1 });
-        localStorage.setItem("cart", JSON.stringify(cart));
-      }
+    axios.post(add_product_url, {"id": id}, {
+    headers: {
+        'Authorization': get_token()
+    }}).then((res) => {
+        // get the message from the server
+        setMessage(res.data.message);
+        setToggle(true);
+     
     }
+  ).catch((e) => {
+    setToggle(true);
+    setMessage("Please Login!");
+    console.log(e);   
   }
-  
+  );
+  }
 
   return (
     <div>
       <BackButton />
-      <Alert toggle={toggle} manageToggle={manageToggle} message="Item added to cart!" />
+      <Alert toggle={toggle} manageToggle={manageToggle} message={message} />
       <div key={product.id} className="product-container">
         <div className="image-container">
           <img src={product.image} alt="" srcset="" />

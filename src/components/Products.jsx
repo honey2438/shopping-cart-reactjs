@@ -3,6 +3,9 @@ import { useState, useEffect } from "react";
 import ProductsShimmer from "./ProductsShimmer";
 import Alert from "./Alert";
 import { Link } from "react-router-dom";
+import axios from "axios";
+import { get_token } from "../services/get_token";
+import {getConfig} from "../config/getConfig";
 
 function Products() {
   const [products, setProducts] = useState([]);
@@ -13,6 +16,9 @@ function Products() {
   const [networkError, setnetworkError] = useState(false);
   const [message, setMessage] = useState("");
   let networkRef=useRef(false);
+
+  const config = getConfig();
+  const add_product_url=config.add_product_url;
 
   useEffect(() => {
     setShimmer(true);
@@ -28,6 +34,7 @@ function Products() {
         setMessage("Network Error");
       });
   }, []);
+  
   const searchProducts = () => {
     if (search === "") {
       setFilteredProducts(products);
@@ -45,32 +52,23 @@ function Products() {
     }
 
   function addToCart(id) {
+    axios.post(add_product_url, {"id": id}, {
+    headers: {
+        'Authorization': get_token()
+    }}).then((res) => {
+    // get the message from the server
     setToggle(true);
-    setMessage("Added to Cart");
-    if (localStorage.getItem("cart") === null) {
-      localStorage.setItem("cart", JSON.stringify([{ id: id, quantity: 1 }]));
-    } else {
-      let cart = JSON.parse(localStorage.getItem("cart"));
-      if (cart.find((item) => item.id === id)) {
-        cart.find((item) => item.id === id).quantity++;
-        localStorage.setItem("cart", JSON.stringify(cart));
-      } else {
-        cart.push({ id: id, quantity: 1 });
-        localStorage.setItem("cart", JSON.stringify(cart));
-      }
-    }
+    setMessage(res.data.message);
+    }).catch((e) => {
+      setToggle(true);
+      setMessage("Please Login!");
+      console.log(e);
+    });
   }
 
   useEffect(() => {
     searchProducts();
   }, [search]);
-
-  // if (networkError === true) {
-  //   if(!networkRef.current){
-  //   setToggle(true)
-  //   }
-  //   networkRef.current=true;
-  // }
 
   return (
     <>

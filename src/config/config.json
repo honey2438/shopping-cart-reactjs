@@ -1,0 +1,12 @@
+{
+  "cart_url": "http://127.0.0.1:5000/products/cart",
+  "add_product_url": "http://127.0.0.1:5000/products/add-product",
+  "delete_product_url": "http://127.0.0.1:5000/products/delete-product",
+  "get_user_url": "http://127.0.0.1:5000/user/getuser",
+  "update_user_url": "http://127.0.0.1:5000/user/update-user",
+  "delete_user_url": "http://127.0.0.1:5000/user/delete-user",
+  "login_url": "http://127.0.0.1:5000/auth/login",
+  "logout_url": "http://127.0.0.1:5000/auth/logout",
+  "signup_url": "http://127.0.0.1:5000/auth/signup",
+  "is_authenticated_url": "http://127.0.0.1:5000/auth/is-authenticated"
+}

@@ -5,73 +5,125 @@ import { useState } from "react";
 import CartShimmer from "./CartShimmer";
 import BackButton from "./BackButton";
 import { useCallback } from "react";
+import axios from "axios";
+import { get_token } from "../services/get_token";
+import {getConfig} from "../config/getConfig";
+
 
 function Cart() {
-  let effect = useRef(true);
   const [products, setProducts] = useState([]);
   const [toggle, setToggle] = useState(false);
   const [shimmer, setShimmer] = useState(true);
+  const [message, setMessage] = useState("");
+  const [totalAmount, setTotalAmount] = useState(0);
+  const [cartProducts, setCartProducts] = useState([]);
 
-  let cartProducts = [];
-  if (localStorage.getItem("cart") !== null) {
-    cartProducts = JSON.parse(localStorage.getItem("cart"));
-    effect.current = false;
-  }
+  const config = getConfig();
+  const cart_url=config.cart_url;
+  const delete_product_url=config.delete_product_url;
 
   useEffect(() => {
-    console.log("running");
-    if (!effect.current) {
-      setShimmer(true);
-      new Promise((resolve, reject) => {
-        cartProducts.forEach((element) => {
-          function fetchProducts() {
-            fetch(`https://fakestoreapi.com/products/${element.id}`)
-              .then((res) => res.json())
-              .then((json) => {
-                json.quantity = element.quantity;
-                setProducts((products) => [...products, json]);
-              });
+    
+    console.log("Hello")
+    setShimmer(true);
+      
+      axios
+        .get(cart_url, {
+          headers: { Authorization: get_token() },
+        })
+        .then((res) => {
+          if (res.status === 200) {
+            console.log(res.data.data);
+            setCartProducts(res.data.data);
+          } else {
+            toggle(true);
+            setMessage(res.data.message);
           }
-          fetchProducts();
+          
+        })
+        .catch((e) => {
+          // console.log(get_token());
+          setToggle(true);
+          setMessage("Please Login!");
+          console.log(e.message);
         });
-        setTimeout(() => {
-          resolve();
-        }, 500);
-      }).then(() => {
-        setShimmer(false);
-      });
-    }
-    effect.current = true;
+    
   }, []);
 
-  //   console.log(products);
+  useEffect(() => {
+    if (cartProducts.length !== 0) {
+      console.log("second hello");
+      cartProducts.forEach((element) => {
+        function fetchProducts() {
+          fetch(`https://fakestoreapi.com/products/${element.id}`)
+            .then((res) => res.json())
+            .then((json) => {
+              setProducts((products) => [...products, json]);
+              
+             
+            }).catch((e) => {
+              setToggle(true);
+              setMessage("Network Error");
+              console.log(e);
+            });
+            
+        }
+        fetchProducts();
+        
+      });
+      setShimmer(false);
+    }
+    else{
+      setShimmer(false);
+    }
+    
+  }, [cartProducts]);
+
 
   const manageToggle = useCallback(() => {
     setToggle(false);
-  }, [toggle]);
+  }, []);
 
   function deleteItem(id) {
-    setToggle(true);
-    cartProducts = cartProducts.filter((item) => item.id !== id);
-    localStorage.setItem("cart", JSON.stringify(cartProducts));
-    setProducts(products.filter((item) => item.id !== id));
+    axios
+      .post(
+        delete_product_url,
+        { id: id },
+        { headers: { Authorization: get_token() } }
+      )
+      .then((res) => {
+        setToggle(true);
+        setMessage(res.data.message);
+        if (res.status === 200) {
+          setProducts((products) => {
+            return products.filter((item) => item.id !== id);
+          });
+          
+        }
+      }).catch((e) => {
+        setToggle(true);
+        setMessage("Product does not exist!");
+        console.log(e);
+      });
   }
+  useEffect(() => {
+  const calculateTotalAmount=()=>{
+    let total=0;
 
-  let totalAmount=0;
-  if (products.length !== 0) {
-    totalAmount = products.reduce((acc, curr) => {
-      return acc + curr.price * curr.quantity;
-    }, 0);
+    products.forEach((item)=>{
+      total+=item.price*cartProducts.find((it) => it.id === item.id).quantity;
+    });
+    // console.log(total)
+    setTotalAmount(total);
   }
+  calculateTotalAmount();
+  }
+  ,[products,cartProducts]);
 
   return (
     <div className="flex-column">
       <BackButton />
-      <Alert
-        toggle={toggle}
-        manageToggle={manageToggle}
-        message="Item deleted!"
-      />
+      <Alert toggle={toggle} manageToggle={manageToggle} message={message} />
       <h1>Cart</h1>
       {shimmer === true ? (
         <CartShimmer />
