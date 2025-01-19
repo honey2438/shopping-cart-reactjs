@@ -3,12 +3,16 @@ from flask_sqlalchemy import SQLAlchemy
 import os
 from flask_jwt_extended import JWTManager, create_access_token, jwt_required, get_jwt_identity, unset_jwt_cookies
 import time
+# enable cors
+from flask_cors import CORS
 
 db=SQLAlchemy()
 DB_NAME="shopping.db"
 
 def create_app():
     app=Flask(__name__)
+    # allow cors
+    CORS(app)
     app.config['SECRET_KEY']="asdba"
     app.config['SQLALCHEMY_DATABASE_URI']=f"sqlite:///{DB_NAME}"
     db.init_app(app)
